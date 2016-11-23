@@ -14,8 +14,8 @@ IsPlayerOfXCOM = true; % X 플레이어가 컴퓨터면 true 사람이면 false
 IsPlayerOfOCOM = true; % O 플레이어가 컴퓨터면 true 사람이면 false
 Randomness_X = 0; % X 플레이어의 Randomness
 Randomness_O = 0; % O 플레이어의 Randomness
-Filename_Of_StateValue_File_X_Uses = 'StateValue_30000Random.mat'; % X가 컴퓨터일 때 사용하는 StateValue 파일의 이름. 서로다른 StateValue 테이블끼리 성능을 비교할때만 아래와 다른 값을 넣어준다.
-Filename_Of_StateValue_File_O_Uses = 'StateValue_30000Random.mat'; % O가 컴퓨터일 때 사용하는 StateValue 파일의 이름. 서로다른 StateValue 테이블끼리 성능을 비교할때만 위와 다른 값을 넣어준다.
+Filename_Of_StateValue_File_X_Uses = 'Analysis/StateValue_30000Random.mat'; % X가 컴퓨터일 때 사용하는 StateValue 파일의 이름. 서로다른 StateValue 테이블끼리 성능을 비교할때만 아래와 다른 값을 넣어준다.
+Filename_Of_StateValue_File_O_Uses = 'Analysis/StateValue_10000Random20.mat'; % O가 컴퓨터일 때 사용하는 StateValue 파일의 이름. 서로다른 StateValue 테이블끼리 성능을 비교할때만 위와 다른 값을 넣어준다.
 PauseTime = 1; % 컴퓨터가 수를 두고 화면 표시를 유지하는 시간(초). 컴퓨터끼리 여러번 싸우게 하고 나중에 결과를 확인하려고 하면 0으로 설정하면 빨리 돌아간다.
 
 %% Load State Value

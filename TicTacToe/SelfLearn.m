@@ -1,4 +1,4 @@
-function [ newStateValue ] = SelfLearn( StateTable, StateValue, LearningRate, Randomness )
+function [ newStateValue, XWin ] = SelfLearn( StateTable, StateValue, LearningRate, Randomness )
 %% 주어진 변수를 토대로 혼자 게임을 진행해 변경된 StateValue를 출력한다.
 %% SelfLearn
 %   @knowblesse
@@ -12,7 +12,7 @@ CurrentState = 'EEEEEEEEE';
 for i = 1 : 9
     if mod(i,2) == 1 % X's turn
         % Make Move
-        [Moves(i), newState] = makeMove(CurrentState,Randomness);
+        [Moves(i), newState] = makeMove( CurrentState, Randomness, StateTable, StateValue );
         % Substitution
         State{1,i} = findIndex(StateTable{1,i},newState); % 현재 Move에 해당되는 State의 Index값을 입력(9글자 Text의 Table에서의 위치)
         State{2,i} = newState; % 현재 Move에 해당되는 State를 입력(9글자 Text)
@@ -27,7 +27,7 @@ for i = 1 : 9
         end
     else % O's turn
         % Make Move
-        [Moves(i), newState] = makeMove(CurrentState,Randomness);
+        [Moves(i), newState] = makeMove( CurrentState, Randomness, StateTable, StateValue );
         % Substitution
         State{1,i} = findIndex(StateTable{1,i},newState);
         State{2,i} = newState;
@@ -41,6 +41,13 @@ for i = 1 : 9
             break;
         end
     end
+end
+if checkState(CurrentState) == 1
+    XWin = 1;
+elseif checkState(CurrentState) == 0
+    XWin = 0;
+else
+    XWin = 0.5;
 end
 newStateValue = StateValue;
 end
