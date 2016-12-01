@@ -14,24 +14,25 @@ clc; % close command window (output window of Matlab)
 
 %% Constants
 
-Start_Pole_Angle = 0.1; % in rad
-Start_Cart_Position = 2;
+Start_Pole_Angle = 0.1; % 시작할 때  Pole의 중앙선으로부터의 각도. in rad
+Start_Cart_Position = 0; % 시작할 때 Cart의 중앙선으로부터의 위치. in m
 
-Mass_Cart = 1; % in kg
-Mass_Pole = 10; % in kg. Assume the Density of the pole is uniform.
+Mass_Cart = 1; % Cart의 질량 in kg
+Mass_Pole = 10; % Pole의 질량 in kg. Assume the Density of the pole is uniform.
 
 L = 6;  % Length of the Pole in m
 
+%% Fixed
 Length_Cart = 5; % in m. Lenght and Height of the cart doesn't affect the result.
 Height_Cart = 1; % Only Location of the Center Point of the Cart matters.
 
+Ts = 0.02; % Time Step in second
 g = 9.81; % Gravity in m/s^2
+Time_Limit = 10000; % in sec
 
 %% Conditions
 Track_Limit = 10; % in m
-Time_Limit = 10000; % in sec
 Pole_Failure_Angle = 12; % in rad
-Ts = 0.02; % Time Step in second
 
 %% Variables
 Cart = Start_Cart_Position; % Location of the Cart's Center Point
@@ -59,9 +60,11 @@ axis([-10, 10, -1, 19]);
 %% Run
 for t = 1 : Time_Limit
     
-    %% 이곳에 Pole, vPole, Cart, vCart 값들을 토대로 F를 계산하는 함수를 넣습니다.
+    %% 이곳에 Pole, vPole, Cart, vCart 값들을 토대로 매 시간마다 F를 계산하는 부분을 넣습니다.
      % 예
      % F = mayTheForceBWithU(Pole,vPole,Cart,vCart);  
+     % 
+     % 이후 Pole이 쓰러졌는지 안쓰러졌는지의 여부에 따라 Value 값을 주는 방향으로 코딩을 하면 됩니다.
     
     new_aPole = (     g*sin(Pole) + cos(Pole)*(  (-F -Mass_Pole*L/2*vPole^2*sin(Pole))/(Mass_Cart + Mass_Pole)  )     )...
         / ( L/2 * (4/3 - (Mass_Pole*(cos(Pole))^2) / (Mass_Cart + Mass_Pole) ));
