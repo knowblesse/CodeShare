@@ -1,16 +1,11 @@
-%% N_arm_bandit Problem
-%   Jeong Ji Hoon
-%   ST_ID : 2016010980
+function [ data1 data2 ] = RunBandit( learnFromAverage, learningRate, usingSoftMax, tau, numberOfLearning, randomness)
+% Run Bandit from given parameters
+%   Detailed explanation goes here
+
 %% JEONG_JIHOON
 %   @Knowblesse
-%   Created on 2016-11-09
+%   Created on 2016-11-23
 %   Last Modified on 2016-11-23
-
-%% Initialization
-clear; % close workspace
-clear;
-close all; % close all figures
-clc; % close command window (output window of Matlab)
 
 %% Bandit Option
 N = 10; % number of the choices
@@ -21,14 +16,11 @@ noise_mean = 0;
 noise_sigma = 1;
 
 %% Learner's Charicteristics
-learnFromAverage = true;
-usingSoftMax = true;
-learningRate = 0.3;
 Q = zeros(1,N); % estiamtes of each arm
-numberOfLearning = 2000;
-randomness = 0.05;
+
 accumResult = Q;
 accumResult(2,1:N) = ones(1,N);
+
 outcome = zeros(numberOfLearning,2); % Col 1 ; estimation | Col 2 : actual result
 
 %% Execute Learning
@@ -36,10 +28,10 @@ for learn = 1 : numberOfLearning
     %% Action Selection
     if rand <= randomness % go random : Exploration
         if usingSoftMax % Selete using Softmax algorithm,
-            Qe = zeros(1,N);
-            for action = 1 : N
-                Qe(action) = exp(
-        else % just select the arm with equal pdf.
+            Qe = exp(Q./tau);
+            Qe = Qe ./ sum(Qe);
+            selection = sum(rand >= cumsum([0,Qe])); % select action from pmf
+        else % just select the arm with equal pmf.
             selection = randi(10);
         end
     else % go greedy : Exploitation
@@ -54,37 +46,18 @@ for learn = 1 : numberOfLearning
     %% Result of the Action
     outcome(learn,2) = q(selection) + normrnd(noise_mean,noise_sigma);
     %% Change the q_estimates
-    if learnFromAverage
+    if learnFromAverage % learn from accumulated result of the selected arm
         accumResult(2,selection) = accumResult(2,selection) + 1;
         accumResult(1,selection) = accumResult(1,selection) + outcome(learn,2); 
         Q(selection) = accumResult(1,selection) / accumResult(2,selection);
-    else
+    else % learn from difference b/w expectation and the result
         Q(selection) =  Q(selection) + learningRate * (outcome(learn,2) - outcome(learn,1));
     end
 end
-%% Print Real q
-for i = 1 : 10
-    fprintf(['q',num2str(i),' : %f | '],q(i));
-end
-fprintf('\n');
-%% Print Estimated Q
-for i = 1 : 10
-    fprintf(['Q',num2str(i),' : %3f | '],Q(i));
-end
-fprintf('\n');
-%% Plot Data
-figure(1);
-plot(outcome(:,2));
-axis([-inf,inf,0,12]);
+%% Return Data
+data1 = outcome(:,2);
 window = 100;
 windowedAverage = reshape(outcome(:,2),10,numberOfLearning/10)';
-figure(2);
-plot(mean(windowedAverage,2));
-axis([-inf,inf,0,12]);
-figure(3);
-movmean = [];
-for i = 1 : numel(outcome(:,2)) - 99
-    movmean = [movmean, mean(outcome(i:i+window-1,2))];
+data2 = mean(windowedAverage,2);
 end
-plot(movmean);
-axis([-inf,inf,0,12]);
+

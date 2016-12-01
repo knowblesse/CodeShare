@@ -85,9 +85,11 @@ plot(outcome(:,2));
 axis([-inf,inf,0,12]);
 window = 100;
 windowedAverage = reshape(outcome(:,2),10,numberOfLearning/10)';
+hold on;
 figure(2);
 plot(mean(windowedAverage,2));
 axis([-inf,inf,0,12]);
+hold on;
 figure(3);
 movmean = [];
 for i = 1 : numel(outcome(:,2)) - 99
@@ -95,3 +97,4 @@ for i = 1 : numel(outcome(:,2)) - 99
 end
 plot(movmean);
 axis([-inf,inf,0,12]);
+hold on;
