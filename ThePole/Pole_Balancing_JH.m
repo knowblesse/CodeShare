@@ -8,9 +8,9 @@
 %   Tested on MATLAB 2015a
 
 %% Initialization
-clear; % close workspace
-clear;
-clc; % close command window (output window of Matlab)
+% clear; % close workspace
+% clear;
+% clc; % close command window (output window of Matlab)
 rng('Shuffle');
 
 %% Constants
@@ -29,7 +29,7 @@ Height_Cart = 1; % Only Location of the Center Point of the Cart matters.
 
 Ts = 0.02; % Time Step in second
 g = 9.81; % Gravity in m/s^2
-Time_Limit = 10000; % in sec
+Time_Limit = 1000; % in sec
 
 %% Conditions
 Track_Limit = 10; % in m
@@ -37,7 +37,7 @@ Pole_Failure_Angle = 12; % in rad
 
 %% Learner's Arg
 InputNum = 4;
-LearnNum = 100;
+LearnNum = 10000;
 
 %% Weights
 Weights = 2*rand(InputNum,1)-1;
@@ -48,9 +48,9 @@ cumdWeights = zeros(InputNum, LearnNum);
 %% Learning
 Performance = zeros(100,1);
 cumOK = 0;
-MaxPerformance = 300;
-% OptimalWeights = zeros(4,1);
-load('Opt');
+MaxPerformance = 0;
+OptimalWeights = zeros(4,1);
+
 for learn = 1 : LearnNum
     %% Variables
     Cart = Start_Cart_Position; % Location of the Cart's Center Point
@@ -91,16 +91,16 @@ for learn = 1 : LearnNum
         Pole = Pole + Ts * vPole;
         Cart = Cart + Ts * vCart;
 
-        clf;
-
-        % Draw Cart
-        rectangle('Position',[Cart - (Length_Cart/2), -(Height_Cart/2), Length_Cart, Height_Cart],'FaceColor','k');
-
-        % Draw Pole
-        line([Cart, Cart + L * sin(Pole)],[0,L * cos(Pole)],'Color','r', 'LineWidth',3);
-        axis([-10, 10, -1, 19]);
-
-        drawnow;
+        %clf;
+% 
+%         % Draw Cart
+%         rectangle('Position',[Cart - (Length_Cart/2), -(Height_Cart/2), Length_Cart, Height_Cart],'FaceColor','k');
+% 
+%         % Draw Pole
+%         line([Cart, Cart + L * sin(Pole)],[0,L * cos(Pole)],'Color','r', 'LineWidth',3);
+%         axis([-10, 10, -1, 19]);
+% 
+%         drawnow;
 
         if ( Pole >= pi/2 || Pole <= -pi/2 ) % Fall on ground
             disp('Pole has fallen X_X');
@@ -112,6 +112,13 @@ for learn = 1 : LearnNum
             disp('Cart has fallen X_X');
             Performance(learn) = t;
             disp(t);
+            break;
+        end
+        if t >= Time_Limit
+            disp('Success');
+            disp(t);
+            Performance(learn) = t;
+            OptimalWeight = Weights;
             break;
         end
         F = [Pole, vPole, Cart, vCart] * Weights;
@@ -126,9 +133,13 @@ for learn = 1 : LearnNum
     else
         Weights = OptimalWeights;
         cumOK = 0;
-        dWeights = 5*rand(InputNum,1)-1;
+        dWeights = 3*randn(InputNum,1)-1;
         Weights = Weights + dWeights;
     end
     cumWeights(:,learn) = Weights;
     cumdWeights(:,learn) = dWeights;
+    disp(learn);
 end
+figure(2);
+clf;
+plot(Performance);
